@@ -91,11 +91,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property(nonatomic, assign) NSTimeInterval responseTime;
 /**
+ *  If the response should wait to be called.
+ *
+ *  Defaults to NO.
+ */
+@property(nonatomic, assign) BOOL shouldWait;
+/**
  *  The fake error to generate to simulate a network error.
  *
  *  If `error` is non-`nil`, the request will result in a failure and no response will be sent.
  */
 @property(nonatomic, strong, nullable) NSError* error;
+/**
+ *  This block is set by the protocol, and called when we need to send the response.
+ */
+@property (nonatomic, copy) void(^sendResponseHandler)(void);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -206,6 +216,26 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return `self` (= the same `OHHTTPStubsResponse` that was the target of this method). Useful for chaining method calls.
  */
 -(instancetype)requestTime:(NSTimeInterval)requestTime responseTime:(NSTimeInterval)responseTime;
+
+/**
+ *  If YES, don't send the response until `respondNow` is called manually.
+ *
+ *  _Usage example:_
+ *  <pre>return [[OHHTTPStubsReponse responseWithData:data statusCode:200 headers:nil]
+ *            shouldWait: YES];</pre>
+ *
+ *  @return `self` (= the same `OHHTTPStubsResponse` that was the target of this method). Useful for chaining method calls.
+ */
+-(instancetype)shouldWait:(BOOL)shouldWait;
+
+/**
+ *  Sends the response now, if `shouldWait` was set to YES.
+ *
+ *  _Usage example:_
+ *  <pre>[response respondNow];</pre>
+ *
+ */
+-(void)respondNow;
 
 
 ////////////////////////////////////////////////////////////////////////////////

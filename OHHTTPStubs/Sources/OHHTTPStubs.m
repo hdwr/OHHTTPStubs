@@ -389,7 +389,21 @@ static NSTimeInterval const kSlotTime = 0.25; // Must be >0. We will send a chun
     {
         OHHTTPStubs.sharedInstance.onStubActivationBlock(request, self.stub, responseStub);
     }
-    
+
+    if (responseStub.shouldWait) {
+        responseStub.sendResponseHandler = ^{
+            [self sendResponseForStub:responseStub];
+        };
+    } else {
+        [self sendResponseForStub:responseStub];
+    }
+}
+
+- (void)sendResponseForStub:(OHHTTPStubsResponse*)responseStub
+{
+    NSURLRequest* request = self.request;
+    id<NSURLProtocolClient> client = self.client;
+
     if (responseStub.error == nil)
     {
         NSHTTPURLResponse* urlResponse = [[NSHTTPURLResponse alloc] initWithURL:request.URL

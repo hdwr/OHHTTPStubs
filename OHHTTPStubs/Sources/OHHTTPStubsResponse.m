@@ -109,6 +109,19 @@ const double OHHTTPStubsDownloadSpeedWifi   =- 12000 / 8; // kbps -> KB/s
     return self;
 }
 
+-(instancetype)shouldWait:(BOOL)shouldWait
+{
+    _shouldWait = shouldWait;
+    return self;
+}
+
+-(void)respondNow
+{
+    if (_sendResponseHandler) {
+        self.sendResponseHandler();
+    };
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark - Initializers
 
